@@ -1,12 +1,13 @@
 """Calculate order-plant-week choices, delivery dates, landed cost, and carbon."""
 
 from datetime import timedelta
+from decimal import Decimal
 
 from .models import Candidate, Dataset
 
 
 def create_candidates(data: Dataset):
-    """All eligible options, INCLUDING late options (used by best-effort fallback)."""
+    """Eligible choices, including late options for fallback."""
     candidates = []
     for order in data.orders.values():
         for plant in data.capacities:
@@ -15,7 +16,7 @@ def create_candidates(data: Dataset):
                 continue
             route = data.transport[(plant, order.destination)]
             unit_subtotal = pp.unit_cost + pp.energy_kwh * pp.energy_price + route.cost
-            # Declared synthetic assumption: duty applies to production + energy + transport.
+            # Duty applies to production, energy, and shipping.
             landed_cost = order.qty * unit_subtotal * (1 + route.duty)
             for week in range(1, data.weeks + 1):
                 week_sunday = data.start + timedelta(days=(week - 1) * 7 + 6)
@@ -25,16 +26,13 @@ def create_candidates(data: Dataset):
                 candidates.append(Candidate(
                     order.id, plant, week, arrival,
                     max(0, (arrival - order.due).days),
-                    round(landed_cost, 6), round(co2_kg, 6),
+                    landed_cost, co2_kg,
                 ))
     return candidates
 
 
 def weekly_capacities(data: Dataset, *, use_events=False, additional_events=()):
-    """Events overlapping any part of a week reduce that whole week.
-
-    The largest (not compounded) event loss wins when events overlap.
-    """
+    """Apply the largest overlapping loss to each whole week."""
     events = (data.events if use_events else ()) + tuple(additional_events)
     capacities = {}
     for plant, full in data.capacities.items():
@@ -42,6 +40,5 @@ def weekly_capacities(data: Dataset, *, use_events=False, additional_events=()):
             monday = data.start + timedelta(days=(week - 1) * 7)
             sunday = monday + timedelta(days=6)
             loss = max((e.loss for e in events if e.plant == plant and e.start <= sunday and e.end >= monday), default=0)
-            capacities[plant, week] = int(full * (1 - loss))
+            capacities[plant, week] = int(Decimal(full) * (Decimal(1) - Decimal(str(loss))))
     return capacities
-

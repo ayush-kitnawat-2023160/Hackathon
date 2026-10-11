@@ -1,6 +1,7 @@
 """CSV columns, file helpers, and challenge-case checks."""
 
 import csv
+from decimal import Decimal
 from datetime import date, timedelta
 
 DESTINATIONS = (
@@ -99,7 +100,7 @@ def edge_case_audit(orders, plants, transport, events, start, *, exclusive_plant
                        if e["plant"] == exclusive_plant
                        and date.fromisoformat(e["from_date"]) <= sunday
                        and date.fromisoformat(e["to_date"]) >= monday]
-        event_c_capacity += int(capacities[exclusive_plant] * (1 - max(week_losses, default=0)))
+        event_c_capacity += int(Decimal(capacities[exclusive_plant]) * (Decimal(1) - Decimal(str(max(week_losses, default=0)))))
 
     result = {
         "cheapest_is_late_but_alternative_is_on_time_count": len(late_cheapest),
@@ -130,4 +131,3 @@ def edge_case_audit(orders, plants, transport, events, start, *, exclusive_plant
         result["exclusive_product_4week_baseline_capacity"] = base_c_capacity
         result["exclusive_product_4week_disrupted_capacity"] = event_c_capacity
     return result
-

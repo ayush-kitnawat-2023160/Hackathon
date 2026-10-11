@@ -1,0 +1,29 @@
+# Planning defaults. Every value here is echoed in a run's assumptions.
+planning_start: "2026-10-12"        # Monday; week 1 = planning_start .. planning_start + 6 days
+weights:                             # applied to normalised cost and carbon (see README, "Weights")
+  cost: 0.7
+  carbon: 0.3
+  lateness: 0.0
+delivery_policy: never_late          # never_late | allow_late
+late_penalty_per_day: 0.05           # allow_late: objective share per late day, relative to one average order
+energy_price_per_kwh_default: 0.12   # used when plants.csv has no energy_price_per_kwh column
+stability_penalty: 0.002             # re-plan: objective cost of moving one order away from its baseline plant
+tradeoff_cuts_pct: [0, 5, 10, 15, 20]
+solver:
+  time_limit_s: 10
+  frontier_time_limit_s: 5             # per carbon-cut point; the points run in parallel
+  gap: 0.001                         # stop within 0.1% of the proven optimum
+  workers: 8
+limits:
+  max_upload_bytes: 5000000
+  max_rows: 20000
+  max_request_chars: 2000
+units:
+  capacity: units per week
+  carbon_intensity: kg CO2e per kWh
+  currency: EUR
+data_card_row_counts:                # check 6: row counts must match the data card (null = not checked)
+  orders: null
+  plants: null
+  transport_duties: null
+  capacity_events: null

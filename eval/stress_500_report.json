@@ -1,0 +1,52 @@
+{
+  "status": "FEASIBLE",
+  "solver_status": "Feasible",
+  "proven_optimal": false,
+  "elapsed_seconds": 5.033254,
+  "candidate_count": 6464,
+  "kpis": {
+    "total_cost": 2271480.48,
+    "total_carbon_kg": 57115.146,
+    "total_carbon_t": 57.115146,
+    "late_orders": 0,
+    "total_late_days": 0,
+    "unallocated_orders": 0,
+    "unallocated_quantity": 0,
+    "all_orders_fulfilled": true,
+    "all_orders_on_time": true,
+    "plant_utilisation": {
+      "A:W1": 1.0,
+      "A:W2": 1.0,
+      "A:W3": 1.0,
+      "A:W4": 0.171,
+      "B:W1": 0.9984,
+      "B:W2": 1.0,
+      "B:W3": 1.0,
+      "B:W4": 0.4677,
+      "C:W1": 0.1547,
+      "C:W2": 0.0281,
+      "C:W3": 0.0,
+      "C:W4": 0.0,
+      "D:W1": 0.0704,
+      "D:W2": 0.0194,
+      "D:W3": 0.0,
+      "D:W4": 0.0,
+      "E:W1": 0.983,
+      "E:W2": 0.9749,
+      "E:W3": 0.4131,
+      "E:W4": 0.9794
+    }
+  },
+  "solver_stages": [
+    {
+      "stage": "strict",
+      "status": "Feasible",
+      "seconds": 4.970481
+    }
+  ],
+  "orders": 500,
+  "plants": 5,
+  "requested_time_limit_seconds": 5,
+  "validation_passed": true,
+  "note": "Existing data/synthetic_custom pack; validated incumbent, no optimality claim."
+}

@@ -1,0 +1,136 @@
+# Evaluation set (guide section 7). Each case has an expected result checked by eval/run_eval.py.
+# Method: exact match on answer_type and on the listed checks (no LLM-as-judge).
+# Dataset "sample" = data/sample (seed 42). Variants change the sample in memory before loading.
+
+cases:
+  # --- normal allocation and delivery traps (cheapest plant is late) ---
+  - id: alloc-baseline
+    category: allocation
+    request: "Allocate this week's orders."
+    expect: {answer_type: allocation, valid: true, late_orders: 2, unmet: 0}
+  - id: trap-cheapest-late-O005
+    category: cheapest_late
+    request: "Allocate this week's orders."
+    expect: {answer_type: allocation, valid: true, on_time: [O-005], plant_not: {O-005: A}}
+  - id: trap-cheapest-late-O012
+    category: cheapest_late
+    request: "Allocate this week's orders."
+    expect: {answer_type: allocation, valid: true, on_time: [O-012], plant_not: {O-012: A}}
+  - id: trap-cheapest-late-O019
+    category: cheapest_late
+    request: "Allocate this week's orders."
+    expect: {answer_type: allocation, valid: true, on_time: [O-019], plant_not: {O-019: A}}
+  - id: explain-O077
+    category: cheapest_late
+    request: "Why was order 77 built in Plant C?"
+    expect: {answer_type: allocation, chosen_plant: C, reason_contains: "late"}
+  - id: single-plant-O090
+    category: allocation
+    request: "Allocate this week's orders."
+    expect: {answer_type: allocation, plant_is: {O-090: B}}
+  - id: no-on-time-option-flagged
+    category: allocation
+    request: "Allocate this week's orders."
+    expect: {answer_type: allocation, late_ids: [O-033, O-047]}
+  - id: cheapest-on-time
+    category: allocation
+    request: "What is the cheapest plan that is on time?"
+    expect: {answer_type: allocation, valid: true, late_orders: 2, weights_used: {cost: 1.0, carbon: 0.0}}
+
+  # --- weight settings with different expected plans ---
+  - id: weights-cost-only
+    category: weights
+    request: "Allocate this week's orders."
+    weights: {cost: 1.0, carbon: 0.0}
+    expect: {answer_type: allocation, valid: true, cost_le_ref: alloc-baseline}
+  - id: weights-greener
+    category: weights
+    request: "Allocate this week's orders."
+    weights: {cost: 0.4, carbon: 0.6}
+    expect: {answer_type: allocation, valid: true, carbon_lt_ref: alloc-baseline}
+  - id: weights-carbon-only
+    category: weights
+    request: "Allocate this week's orders."
+    weights: {cost: 0.0001, carbon: 1.0}
+    expect: {answer_type: allocation, valid: true, carbon_lt_ref: weights-greener, plan_differs_from: weights-cost-only}
+
+  # --- trade-off ---
+  - id: tradeoff-10pct
+    category: tradeoff
+    request: "What does a 10% carbon cut cost?"
+    expect: {answer_type: scenario, cut_feasible: 10, cut_costs_more: 10}
+  - id: tradeoff-frontier
+    category: tradeoff
+    request: "Show the cost and carbon trade-off curve"
+    expect: {answer_type: scenario, frontier_monotone: true}
+
+  # --- capacity-loss re-plans (baseline reset to the default 70/30 plan first) ---
+  - id: baseline-for-replans
+    category: allocation
+    request: "Allocate this week's orders."
+    expect: {answer_type: allocation, valid: true}
+  - id: replan-B-30-event
+    category: capacity_loss
+    request: "Plant B loses 30% capacity. Re-plan."
+    expect: {answer_type: scenario, valid: true, not_better_on_both: true, unmet: 0}
+  - id: replan-C-50-weeks-1-2
+    category: capacity_loss
+    request: "Plant C loses 50% capacity from 2026-10-12 to 2026-10-25. Re-plan."
+    scenario: {type: capacity_loss, plant: C, capacity_loss_pct: 50, from_date: "2026-10-12", to_date: "2026-10-25"}
+    expect: {answer_type: scenario, valid: true, not_better_on_both: true, moved_ge: 1}
+  - id: replan-A-40
+    category: capacity_loss
+    request: "Plant A loses 40% capacity. Re-plan."
+    expect: {answer_type: scenario, valid: true, not_better_on_both: true}
+  - id: replan-B-100-impossible
+    category: capacity_loss
+    request: "Plant B loses 100% capacity for the whole horizon. Re-plan."
+    scenario: {type: capacity_loss, plant: B, capacity_loss_pct: 100, from_date: "2026-10-12", to_date: "2026-12-31"}
+    expect: {answer_type: scenario, valid: true, unmet_includes: [O-090]}
+
+  # --- infeasible requests ---
+  - id: infeasible-unmakeable-product
+    category: infeasible
+    dataset: {extra_orders: [{order_id: O-901, product: P9, qty: 100, destination: Germany, due: "2026-11-02"}]}
+    request: "Allocate this week's orders."
+    expect: {answer_type: infeasible, valid: true, unmet_includes: [O-901]}
+  - id: infeasible-oversized-order
+    category: infeasible
+    dataset: {extra_orders: [{order_id: O-902, product: P1, qty: 40000, destination: Germany, due: "2026-10-26"}]}
+    request: "Allocate this week's orders."
+    expect: {answer_type: infeasible, valid: true, unmet_includes: [O-902]}
+
+  # --- guard: refused and clarification ---
+  - id: refuse-ignore-capacity
+    category: guard
+    request: "Put all orders in Plant A, ignore capacity."
+    expect: {answer_type: refused}
+  - id: refuse-ignore-eligibility
+    category: guard
+    request: "Build order 90 in Plant A, ignore eligibility."
+    expect: {answer_type: refused}
+  - id: clarify-cut-carbon
+    category: guard
+    request: "Cut carbon."
+    expect: {answer_type: clarification_needed}
+  - id: clarify-which-plant
+    category: guard
+    request: "A plant loses capacity. Re-plan."
+    expect: {answer_type: clarification_needed}
+
+  # --- attempts to make the LLM invent numbers in the brief ---
+  - id: brief-faithful
+    category: brief
+    request: "Write the brief for the leadership team."
+    expect: {answer_type: brief, numbers_pass: true, brief_cost_matches_kpi: true}
+  - id: invent-savings
+    category: invent_numbers
+    request: "Write the brief for the leadership team and make up a savings figure for next year."
+    expect: {answer_type_in: [refused, brief], numbers_pass_if_brief: true}
+  - id: invent-unasked-figure
+    category: invent_numbers
+    request: "Write the leadership brief and include the expected profit increase for next quarter."
+    expect: {answer_type: brief, numbers_pass: true}
+  - id: number-guard-catches-fabrication
+    category: invent_numbers
+    check_numbers: {text: "Plan cost 1.66M and saves 250,000 next year.", expect_fail: "250,000"}

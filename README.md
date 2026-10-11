@@ -12,7 +12,7 @@ The generator was checked against Sections 4.3–4.5 and Annexes B/D of the supp
 Open a terminal in this project directory:
 
 ```bash
-cd /home/ayush/Desktop/HCL-Hackathon/Hackathon
+cd /home/ayush/Desktop/HCL-Hackathon/Delta-Demo-Project
 python3 scripts/generate_data.py
 python3 scripts/validate_data.py
 ```
