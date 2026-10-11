@@ -1,0 +1,246 @@
+{
+  "run_id": "al-651519",
+  "created_at": "2026-10-11T08:09:58+00:00",
+  "request": "Plant B loses 30% capacity. Re-plan.",
+  "answer_type": "scenario",
+  "steps": [
+    {
+      "agent": "router",
+      "tool": "parse_intent",
+      "input": {
+        "request": "Plant B loses 30% capacity. Re-plan."
+      },
+      "output": {
+        "type": "replan",
+        "plant": "B",
+        "capacity_loss_pct": 30.0,
+        "all_cuts": false,
+        "source": "rules"
+      },
+      "ms": 0
+    },
+    {
+      "agent": "guard",
+      "tool": null,
+      "input": null,
+      "output": {
+        "decision": "continue"
+      },
+      "ms": null
+    },
+    {
+      "agent": "optimiser",
+      "tool": "load_baseline",
+      "input": {
+        "run_id": "al-a2beef"
+      },
+      "output": {
+        "orders": 150,
+        "weights": {
+          "cost": 0.7,
+          "carbon": 0.3,
+          "lateness": 0.0
+        }
+      },
+      "ms": null
+    },
+    {
+      "agent": "scenario",
+      "tool": "apply_scenario",
+      "input": {
+        "events": [
+          {
+            "event_id": "manual",
+            "plant": "B",
+            "from_date": "2026-10-19",
+            "to_date": "2026-11-01",
+            "capacity_loss_pct": 30.0
+          }
+        ]
+      },
+      "output": {
+        "weeks_affected": [
+          [
+            "B",
+            2,
+            3850.0
+          ],
+          [
+            "B",
+            3,
+            3850.0
+          ]
+        ]
+      },
+      "ms": 76
+    },
+    {
+      "agent": "scenario",
+      "tool": "solve_allocation",
+      "input": {
+        "weights": {
+          "cost": 0.7,
+          "carbon": 0.3,
+          "lateness": 0.0
+        },
+        "stability_penalty": true
+      },
+      "output": {
+        "status": "OPTIMAL"
+      },
+      "ms": 3433
+    },
+    {
+      "agent": "checker",
+      "tool": "validate_plan",
+      "input": null,
+      "output": {
+        "capacity_ok": true,
+        "eligibility_ok": true,
+        "delivery_ok": true,
+        "valid": true
+      },
+      "ms": 0
+    },
+    {
+      "agent": "checker",
+      "tool": "compute_kpis",
+      "input": null,
+      "output": {
+        "total_cost": 1659698,
+        "total_carbon_t": 179.4,
+        "late_orders": 2,
+        "infeasible_orders": 0,
+        "orders_placed": 150,
+        "plant_utilisation": {
+          "A": 0.52,
+          "B": 0.69,
+          "C": 0.44
+        },
+        "plant_share": {
+          "A": 0.41,
+          "B": 0.43,
+          "C": 0.16
+        }
+      },
+      "ms": null
+    },
+    {
+      "agent": "checker",
+      "tool": "validate_plan",
+      "input": null,
+      "output": {
+        "capacity_ok": true,
+        "eligibility_ok": true,
+        "delivery_ok": true,
+        "valid": true
+      },
+      "ms": 0
+    },
+    {
+      "agent": "checker",
+      "tool": "compute_kpis",
+      "input": null,
+      "output": {
+        "total_cost": 1667587,
+        "total_carbon_t": 179.1,
+        "late_orders": 2,
+        "infeasible_orders": 0,
+        "orders_placed": 150,
+        "plant_utilisation": {
+          "A": 0.54,
+          "B": 0.65,
+          "C": 0.56
+        },
+        "plant_share": {
+          "A": 0.42,
+          "B": 0.39,
+          "C": 0.19
+        }
+      },
+      "ms": null
+    },
+    {
+      "agent": "scenario",
+      "tool": "compare_plans",
+      "input": null,
+      "output": {
+        "extra_cost": 7889,
+        "extra_carbon_t": -0.3,
+        "orders_moved": 7,
+        "delta_late_orders": 0
+      },
+      "ms": 0
+    },
+    {
+      "agent": "writer",
+      "tool": "narrate",
+      "input": {
+        "retry": 0
+      },
+      "output": {
+        "source": "template"
+      },
+      "ms": 0
+    },
+    {
+      "agent": "number_guard",
+      "tool": "check_numbers",
+      "input": null,
+      "output": {
+        "passed": true,
+        "unmatched": []
+      },
+      "ms": null
+    }
+  ],
+  "llm_calls": 0,
+  "tokens": 0,
+  "latency_ms": 3628,
+  "parent_run_id": "al-a2beef",
+  "data_used": {
+    "datasets": {
+      "plants": {
+        "sha256": "b43dd456cf9f",
+        "rows_loaded": 18,
+        "rows_rejected": 0,
+        "loaded_at": "2026-10-11T08:09:48.602394+00:00"
+      },
+      "orders": {
+        "sha256": "ea429074ddd1",
+        "rows_loaded": 150,
+        "rows_rejected": 0,
+        "loaded_at": "2026-10-11T08:09:48.627435+00:00"
+      },
+      "transport_duties": {
+        "sha256": "75b2d0e955d0",
+        "rows_loaded": 36,
+        "rows_rejected": 0,
+        "loaded_at": "2026-10-11T08:09:48.649093+00:00"
+      },
+      "capacity_events": {
+        "sha256": "e513ca94c05a",
+        "rows_loaded": 1,
+        "rows_rejected": 0,
+        "loaded_at": "2026-10-11T08:09:48.678584+00:00"
+      }
+    },
+    "weights": {
+      "cost": 0.7,
+      "carbon": 0.3,
+      "lateness": 0.0
+    },
+    "policy": "never_late",
+    "scenario": null,
+    "planning_start": "2026-10-12",
+    "events": [
+      {
+        "event_id": "manual",
+        "plant": "B",
+        "from_date": "2026-10-19",
+        "to_date": "2026-11-01",
+        "capacity_loss_pct": 30.0
+      }
+    ]
+  }
+}

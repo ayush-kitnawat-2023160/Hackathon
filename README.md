@@ -4,6 +4,10 @@ TriPlan now includes the **solver**, mandatory **FastAPI judge endpoints**, a si
 
 The solver decides. The independent validator verifies. The LLM parses requests and explains verified outputs. No LLM generates assignments, rankings or computed totals.
 
+**Primary application:** This repository root (`compose.yaml`, `ui.py`, `app/api.py`) is the supported TriPlan entry point. The upstream sync also included an independently developed prototype in [`Factory System Management/`](Factory%20System%20Management/README.md), with its own runtime, tests, and solver. It is retained as a comparison/reference implementation, **not** started by the root Docker Compose stack. Do not run both Compose stacks on ports 8000/8501 simultaneously.
+
+**Allocator improvements integrated from upstream:** deterministic CBC solve settings, proof-aware statuses, dataset signatures, a shared time budget, lexicographic best-effort allocation, frozen order commitments, replanning diagnostics, and alternative/trade-off analysis tools. Run `python3 -m pytest tests -q` from the repo root; the reference app has its own test environment.
+
 ## Quick start (full app)
 
 ```bash

@@ -1,0 +1,158 @@
+{
+  "run_id": "al-a2beef",
+  "created_at": "2026-10-11T08:09:54+00:00",
+  "request": "Allocate this week's orders.",
+  "answer_type": "allocation",
+  "steps": [
+    {
+      "agent": "router",
+      "tool": "parse_intent",
+      "input": {
+        "request": "Allocate this week's orders."
+      },
+      "output": {
+        "type": "allocate",
+        "all_cuts": false,
+        "source": "rules"
+      },
+      "ms": 4
+    },
+    {
+      "agent": "guard",
+      "tool": null,
+      "input": null,
+      "output": {
+        "decision": "continue"
+      },
+      "ms": null
+    },
+    {
+      "agent": "optimiser",
+      "tool": "build_options",
+      "input": {
+        "start": "2026-10-12",
+        "weeks": 6
+      },
+      "output": {
+        "options": 2184
+      },
+      "ms": 94
+    },
+    {
+      "agent": "optimiser",
+      "tool": "solve_allocation",
+      "input": {
+        "weights": {
+          "cost": 0.7,
+          "carbon": 0.3,
+          "lateness": 0.0
+        },
+        "policy": "never_late"
+      },
+      "output": {
+        "status": "OPTIMAL",
+        "placed": 150,
+        "unmet": 0,
+        "solve_ms": 727
+      },
+      "ms": 761
+    },
+    {
+      "agent": "checker",
+      "tool": "validate_plan",
+      "input": null,
+      "output": {
+        "capacity_ok": true,
+        "eligibility_ok": true,
+        "delivery_ok": true,
+        "valid": true
+      },
+      "ms": 0
+    },
+    {
+      "agent": "checker",
+      "tool": "compute_kpis",
+      "input": null,
+      "output": {
+        "total_cost": 1659698,
+        "total_carbon_t": 179.4,
+        "late_orders": 2,
+        "infeasible_orders": 0,
+        "orders_placed": 150,
+        "plant_utilisation": {
+          "A": 0.52,
+          "B": 0.69,
+          "C": 0.44
+        },
+        "plant_share": {
+          "A": 0.41,
+          "B": 0.43,
+          "C": 0.16
+        }
+      },
+      "ms": null
+    },
+    {
+      "agent": "writer",
+      "tool": "narrate",
+      "input": {
+        "retry": 0
+      },
+      "output": {
+        "source": "template"
+      },
+      "ms": 0
+    },
+    {
+      "agent": "number_guard",
+      "tool": "check_numbers",
+      "input": null,
+      "output": {
+        "passed": true,
+        "unmatched": []
+      },
+      "ms": null
+    }
+  ],
+  "llm_calls": 0,
+  "tokens": 0,
+  "latency_ms": 886,
+  "parent_run_id": null,
+  "data_used": {
+    "datasets": {
+      "plants": {
+        "sha256": "b43dd456cf9f",
+        "rows_loaded": 18,
+        "rows_rejected": 0,
+        "loaded_at": "2026-10-11T08:09:48.602394+00:00"
+      },
+      "orders": {
+        "sha256": "ea429074ddd1",
+        "rows_loaded": 150,
+        "rows_rejected": 0,
+        "loaded_at": "2026-10-11T08:09:48.627435+00:00"
+      },
+      "transport_duties": {
+        "sha256": "75b2d0e955d0",
+        "rows_loaded": 36,
+        "rows_rejected": 0,
+        "loaded_at": "2026-10-11T08:09:48.649093+00:00"
+      },
+      "capacity_events": {
+        "sha256": "e513ca94c05a",
+        "rows_loaded": 1,
+        "rows_rejected": 0,
+        "loaded_at": "2026-10-11T08:09:48.678584+00:00"
+      }
+    },
+    "weights": {
+      "cost": 0.7,
+      "carbon": 0.3,
+      "lateness": 0.0
+    },
+    "policy": "never_late",
+    "scenario": null,
+    "planning_start": "2026-10-12",
+    "events": []
+  }
+}

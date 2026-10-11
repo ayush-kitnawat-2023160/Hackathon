@@ -1,0 +1,11 @@
+# This folder tracks its generator, the small sample pack and the data card
+# (the root .gitignore ignores every data/ directory; re-include this one).
+!data/
+data/*
+!data/generate.py
+!data/sample/
+!data/DATA_CARD.md
+*.db
+*.db-*
+*.pyc
+.ruff_cache/

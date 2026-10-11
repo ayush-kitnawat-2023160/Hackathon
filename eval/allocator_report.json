@@ -1,0 +1,696 @@
+{
+  "environment": {
+    "python": "3.13.9",
+    "platform": "Linux-7.0.0-38-generic-x86_64-with-glibc2.39",
+    "pulp": "3.3.0",
+    "allocator_sha256": "4120a2161be5b4d47c37a796aeae78c91a82b4aeed79426598ae2e4c1d0431ca"
+  },
+  "scope": "Standalone allocator only; agent faithfulness/API/Docker evaluation is still separate.",
+  "method": "Unit assertions, hand-calculated coefficients, 90 exhaustive small-instance objective comparisons, seeded full-pack benchmarks.",
+  "tests": {
+    "run": 59,
+    "passed": [
+      "test_allocator.TestAllocator.test_capacity_events_and_comparison",
+      "test_allocator.TestAllocator.test_carbon_budget_and_tradeoff",
+      "test_allocator.TestAllocator.test_carbon_objective_chooses_B",
+      "test_allocator.TestAllocator.test_cost_cheapest_assigns_both_to_A",
+      "test_allocator.TestAllocator.test_fallback_reports_late_order_explicitly",
+      "test_allocator.TestAllocator.test_fallback_unallocated_if_no_capacity",
+      "test_allocator.TestAllocator.test_inline_capacity_event",
+      "test_allocator.TestAllocator.test_invalid_agent_parameters_rejected",
+      "test_allocator.TestAllocator.test_validate_catches_capacity_and_forged_cost",
+      "test_allocator.TestAllocator.test_without_fallback_infeasible",
+      "test_allocator.TestAllocator.test_zero_explicit_energy_price_is_accepted",
+      "test_allocator_analysis.TestAnalysis.test_counterfactual_infeasible_and_rejects_wrong_data",
+      "test_allocator_analysis.TestAnalysis.test_counterfactual_reoptimizes_and_reports_other_moves",
+      "test_allocator_analysis.TestAnalysis.test_counterfactual_reuses_recorded_capacity_event",
+      "test_allocator_analysis.TestAnalysis.test_dataset_hash_depends_on_contents_not_folder",
+      "test_allocator_analysis.TestAnalysis.test_diagnosis_does_not_invent_a_cause",
+      "test_allocator_analysis.TestAnalysis.test_diagnosis_proves_exclusive_capacity_shortage",
+      "test_allocator_analysis.TestAnalysis.test_freezing_keeps_plant_and_week",
+      "test_allocator_analysis.TestAnalysis.test_frozen_order_cannot_be_dropped_after_outage",
+      "test_allocator_analysis.TestAnalysis.test_tradeoffs_remove_duplicate_points_and_report_infeasibility",
+      "test_allocator_robustness.TestAllocatorRobustness.test_capacity_decimal_rounding_and_event_boundaries",
+      "test_allocator_robustness.TestAllocatorRobustness.test_compare_rejects_changed_demand",
+      "test_allocator_robustness.TestAllocatorRobustness.test_cost_and_carbon_budgets_stay_hard_in_fallback",
+      "test_allocator_robustness.TestAllocatorRobustness.test_cost_duty_and_weekly_carbon_hand_calculation",
+      "test_allocator_robustness.TestAllocatorRobustness.test_exact_small_instances",
+      "test_allocator_robustness.TestAllocatorRobustness.test_forced_ineligible_plant_is_infeasible",
+      "test_allocator_robustness.TestAllocatorRobustness.test_ids_with_punctuation_do_not_collide",
+      "test_allocator_robustness.TestAllocatorRobustness.test_invalid_config_shapes_and_typed_values",
+      "test_allocator_robustness.TestAllocatorRobustness.test_loader_rejects_bad_rows_and_metadata",
+      "test_allocator_robustness.TestAllocatorRobustness.test_malformed_rows_and_forged_numbers",
+      "test_allocator_robustness.TestAllocatorRobustness.test_no_false_optimal_claim_after_cbc_timeout",
+      "test_allocator_robustness.TestAllocatorRobustness.test_normalization_and_inputs_stay_fixed_in_scenarios",
+      "test_allocator_robustness.TestAllocatorRobustness.test_stability_preference_keeps_previous_plant_and_week",
+      "test_allocator_robustness.TestAllocatorRobustness.test_three_balanced_weight_settings",
+      "test_allocator_robustness.TestAllocatorRobustness.test_three_capacity_loss_scenarios",
+      "test_allocator_robustness.TestAllocatorRobustness.test_three_cheapest_late_traps",
+      "test_allocator_robustness.TestAllocatorRobustness.test_time_limit_is_shared",
+      "test_allocator_robustness.TestAllocatorRobustness.test_timeout_does_not_relax_delivery",
+      "test_allocator_robustness.TestAllocatorRobustness.test_timeout_keeps_verified_fallback_incumbent",
+      "test_allocator_robustness.TestAllocatorRobustness.test_tradeoff_validates_target_and_uses_unrounded_carbon",
+      "test_allocator_robustness.TestAllocatorRobustness.test_validator_catches_weekly_capacity_overload",
+      "test_allocator_robustness.TestAllocatorRobustness.test_validator_rejects_excluded_pair_from_json",
+      "test_data_generator.TestFlexibleDataGenerator.test_five_plants_five_hundred_orders",
+      "test_data_generator.TestFlexibleDataGenerator.test_second_generator_run_is_reproducible",
+      "test_data_generator.TestFlexibleDataGenerator.test_small_dataset_warns_below_guide_minimum",
+      "test_data_generator.TestFlexibleDataGenerator.test_variable_products_destinations_weeks",
+      "test_data_generator.TestFlexibleDataGenerator.test_wrong_dimensions_rejected",
+      "test_data_generator.TestSyntheticGenerator.test_all_required_traps_are_present",
+      "test_data_generator.TestSyntheticGenerator.test_annex_b_without_optional_columns_or_card",
+      "test_data_generator.TestSyntheticGenerator.test_bad_csv_is_rejected",
+      "test_data_generator.TestSyntheticGenerator.test_corrupt_card_is_rejected",
+      "test_data_generator.TestSyntheticGenerator.test_default_baseline_has_a_constructive_on_time_plan",
+      "test_data_generator.TestSyntheticGenerator.test_disclosed_data_card_matches_files",
+      "test_data_generator.TestSyntheticGenerator.test_invalid_values_are_reported_without_crashing",
+      "test_data_generator.TestSyntheticGenerator.test_missing_route_and_duplicate_event_are_rejected",
+      "test_data_generator.TestSyntheticGenerator.test_planning_start_is_read_from_card",
+      "test_data_generator.TestSyntheticGenerator.test_required_columns_and_counts",
+      "test_data_generator.TestSyntheticGenerator.test_same_seed_generates_identical_csv",
+      "test_data_generator.TestSyntheticGenerator.test_two_week_event_and_fractional_percentage"
+    ],
+    "failures": [],
+    "errors": []
+  },
+  "benchmark": {
+    "orders": 150,
+    "plants": 3,
+    "seed": 20261011,
+    "repeats": 3,
+    "time_limit_per_plan_seconds": 5.0,
+    "p50_seconds": 4.065250000000001,
+    "p95_seconds": 5.029136,
+    "validity_rate": 1.0,
+    "statuses": {
+      "OPTIMAL": 3,
+      "FEASIBLE": 6,
+      "BEST_EFFORT": 3
+    },
+    "runs": [
+      {
+        "case": "cost",
+        "repeat": 1,
+        "status": "OPTIMAL",
+        "valid": true,
+        "proven_optimal": true,
+        "seconds": 2.499444,
+        "kpis": {
+          "total_cost": 662081.57,
+          "total_carbon_kg": 20251.09,
+          "total_carbon_t": 20.25109,
+          "late_orders": 0,
+          "total_late_days": 0,
+          "unallocated_orders": 0,
+          "unallocated_quantity": 0,
+          "all_orders_fulfilled": true,
+          "all_orders_on_time": true,
+          "plant_utilisation": {
+            "A:W1": 1.0,
+            "A:W2": 1.0,
+            "A:W3": 1.0,
+            "A:W4": 0.2548,
+            "B:W1": 0.9776,
+            "B:W2": 0.6539,
+            "B:W3": 0.1105,
+            "B:W4": 0.0,
+            "C:W1": 0.9943,
+            "C:W2": 0.9943,
+            "C:W3": 0.9943,
+            "C:W4": 0.3314
+          }
+        },
+        "solver_stages": [
+          {
+            "stage": "strict",
+            "status": "Optimal",
+            "seconds": 2.486131
+          }
+        ]
+      },
+      {
+        "case": "carbon",
+        "repeat": 1,
+        "status": "FEASIBLE",
+        "valid": true,
+        "proven_optimal": false,
+        "seconds": 5.024142,
+        "kpis": {
+          "total_cost": 697047.38,
+          "total_carbon_kg": 14260.628,
+          "total_carbon_t": 14.260628,
+          "late_orders": 0,
+          "total_late_days": 0,
+          "unallocated_orders": 0,
+          "unallocated_quantity": 0,
+          "all_orders_fulfilled": true,
+          "all_orders_on_time": true,
+          "plant_utilisation": {
+            "A:W1": 0.4738,
+            "A:W2": 0.0,
+            "A:W3": 0.7524,
+            "A:W4": 0.0,
+            "B:W1": 0.9934,
+            "B:W2": 0.9882,
+            "B:W3": 0.9961,
+            "B:W4": 0.7039,
+            "C:W1": 0.9943,
+            "C:W2": 0.9886,
+            "C:W3": 0.9943,
+            "C:W4": 0.9943
+          }
+        },
+        "solver_stages": [
+          {
+            "stage": "strict",
+            "status": "Feasible",
+            "seconds": 5.010687
+          }
+        ]
+      },
+      {
+        "case": "balanced",
+        "repeat": 1,
+        "status": "FEASIBLE",
+        "valid": true,
+        "proven_optimal": false,
+        "seconds": 5.020577,
+        "kpis": {
+          "total_cost": 694342.83,
+          "total_carbon_kg": 14301.646,
+          "total_carbon_t": 14.301646,
+          "late_orders": 0,
+          "total_late_days": 0,
+          "unallocated_orders": 0,
+          "unallocated_quantity": 0,
+          "all_orders_fulfilled": true,
+          "all_orders_on_time": true,
+          "plant_utilisation": {
+            "A:W1": 0.4833,
+            "A:W2": 0.0,
+            "A:W3": 0.7488,
+            "A:W4": 0.0,
+            "B:W1": 1.0,
+            "B:W2": 0.9816,
+            "B:W3": 1.0,
+            "B:W4": 0.7039,
+            "C:W1": 0.96,
+            "C:W2": 1.0,
+            "C:W3": 0.9943,
+            "C:W4": 0.9943
+          }
+        },
+        "solver_stages": [
+          {
+            "stage": "strict",
+            "status": "Feasible",
+            "seconds": 5.00508
+          }
+        ]
+      },
+      {
+        "case": "outage",
+        "repeat": 1,
+        "status": "BEST_EFFORT",
+        "valid": true,
+        "proven_optimal": true,
+        "seconds": 1.045744,
+        "kpis": {
+          "total_cost": 623806.15,
+          "total_carbon_kg": 20015.538,
+          "total_carbon_t": 20.015538,
+          "late_orders": 0,
+          "total_late_days": 0,
+          "unallocated_orders": 4,
+          "unallocated_quantity": 232,
+          "all_orders_fulfilled": false,
+          "all_orders_on_time": false,
+          "plant_utilisation": {
+            "A:W1": 1.0,
+            "A:W2": 1.0,
+            "A:W3": 1.0,
+            "A:W4": 0.2548,
+            "B:W1": 0.9816,
+            "B:W2": 0.65,
+            "B:W3": 0.1105,
+            "B:W4": 0.0,
+            "C:W1": 0.9943,
+            "C:W2": 0.9508,
+            "C:W3": 0.9508,
+            "C:W4": 0.9943
+          }
+        },
+        "solver_stages": [
+          {
+            "stage": "strict",
+            "status": "Infeasible",
+            "seconds": 0.010146
+          },
+          {
+            "stage": "unallocated_count",
+            "status": "Optimal",
+            "seconds": 0.027263
+          },
+          {
+            "stage": "unallocated_units",
+            "status": "Optimal",
+            "seconds": 0.120141
+          },
+          {
+            "stage": "late_orders",
+            "status": "Optimal",
+            "seconds": 0.074844
+          },
+          {
+            "stage": "late_days",
+            "status": "Optimal",
+            "seconds": 0.029539
+          },
+          {
+            "stage": "final_objective",
+            "status": "Optimal",
+            "seconds": 0.747118
+          }
+        ]
+      },
+      {
+        "case": "cost",
+        "repeat": 2,
+        "status": "OPTIMAL",
+        "valid": true,
+        "proven_optimal": true,
+        "seconds": 2.837963,
+        "kpis": {
+          "total_cost": 662081.57,
+          "total_carbon_kg": 20251.09,
+          "total_carbon_t": 20.25109,
+          "late_orders": 0,
+          "total_late_days": 0,
+          "unallocated_orders": 0,
+          "unallocated_quantity": 0,
+          "all_orders_fulfilled": true,
+          "all_orders_on_time": true,
+          "plant_utilisation": {
+            "A:W1": 1.0,
+            "A:W2": 1.0,
+            "A:W3": 1.0,
+            "A:W4": 0.2548,
+            "B:W1": 0.9776,
+            "B:W2": 0.6539,
+            "B:W3": 0.1105,
+            "B:W4": 0.0,
+            "C:W1": 0.9943,
+            "C:W2": 0.9943,
+            "C:W3": 0.9943,
+            "C:W4": 0.3314
+          }
+        },
+        "solver_stages": [
+          {
+            "stage": "strict",
+            "status": "Optimal",
+            "seconds": 2.824969
+          }
+        ]
+      },
+      {
+        "case": "carbon",
+        "repeat": 2,
+        "status": "FEASIBLE",
+        "valid": true,
+        "proven_optimal": false,
+        "seconds": 5.024553,
+        "kpis": {
+          "total_cost": 697047.38,
+          "total_carbon_kg": 14260.628,
+          "total_carbon_t": 14.260628,
+          "late_orders": 0,
+          "total_late_days": 0,
+          "unallocated_orders": 0,
+          "unallocated_quantity": 0,
+          "all_orders_fulfilled": true,
+          "all_orders_on_time": true,
+          "plant_utilisation": {
+            "A:W1": 0.4738,
+            "A:W2": 0.0,
+            "A:W3": 0.7524,
+            "A:W4": 0.0,
+            "B:W1": 0.9934,
+            "B:W2": 0.9882,
+            "B:W3": 0.9961,
+            "B:W4": 0.7039,
+            "C:W1": 0.9943,
+            "C:W2": 0.9886,
+            "C:W3": 0.9943,
+            "C:W4": 0.9943
+          }
+        },
+        "solver_stages": [
+          {
+            "stage": "strict",
+            "status": "Feasible",
+            "seconds": 5.011669
+          }
+        ]
+      },
+      {
+        "case": "balanced",
+        "repeat": 2,
+        "status": "FEASIBLE",
+        "valid": true,
+        "proven_optimal": false,
+        "seconds": 5.022084,
+        "kpis": {
+          "total_cost": 694342.83,
+          "total_carbon_kg": 14301.646,
+          "total_carbon_t": 14.301646,
+          "late_orders": 0,
+          "total_late_days": 0,
+          "unallocated_orders": 0,
+          "unallocated_quantity": 0,
+          "all_orders_fulfilled": true,
+          "all_orders_on_time": true,
+          "plant_utilisation": {
+            "A:W1": 0.4833,
+            "A:W2": 0.0,
+            "A:W3": 0.7488,
+            "A:W4": 0.0,
+            "B:W1": 1.0,
+            "B:W2": 0.9816,
+            "B:W3": 1.0,
+            "B:W4": 0.7039,
+            "C:W1": 0.96,
+            "C:W2": 1.0,
+            "C:W3": 0.9943,
+            "C:W4": 0.9943
+          }
+        },
+        "solver_stages": [
+          {
+            "stage": "strict",
+            "status": "Feasible",
+            "seconds": 5.007974
+          }
+        ]
+      },
+      {
+        "case": "outage",
+        "repeat": 2,
+        "status": "BEST_EFFORT",
+        "valid": true,
+        "proven_optimal": true,
+        "seconds": 1.138053,
+        "kpis": {
+          "total_cost": 623806.15,
+          "total_carbon_kg": 20015.538,
+          "total_carbon_t": 20.015538,
+          "late_orders": 0,
+          "total_late_days": 0,
+          "unallocated_orders": 4,
+          "unallocated_quantity": 232,
+          "all_orders_fulfilled": false,
+          "all_orders_on_time": false,
+          "plant_utilisation": {
+            "A:W1": 1.0,
+            "A:W2": 1.0,
+            "A:W3": 1.0,
+            "A:W4": 0.2548,
+            "B:W1": 0.9816,
+            "B:W2": 0.65,
+            "B:W3": 0.1105,
+            "B:W4": 0.0,
+            "C:W1": 0.9943,
+            "C:W2": 0.9508,
+            "C:W3": 0.9508,
+            "C:W4": 0.9943
+          }
+        },
+        "solver_stages": [
+          {
+            "stage": "strict",
+            "status": "Infeasible",
+            "seconds": 0.01118
+          },
+          {
+            "stage": "unallocated_count",
+            "status": "Optimal",
+            "seconds": 0.027493
+          },
+          {
+            "stage": "unallocated_units",
+            "status": "Optimal",
+            "seconds": 0.150489
+          },
+          {
+            "stage": "late_orders",
+            "status": "Optimal",
+            "seconds": 0.074289
+          },
+          {
+            "stage": "late_days",
+            "status": "Optimal",
+            "seconds": 0.031464
+          },
+          {
+            "stage": "final_objective",
+            "status": "Optimal",
+            "seconds": 0.801957
+          }
+        ]
+      },
+      {
+        "case": "cost",
+        "repeat": 3,
+        "status": "OPTIMAL",
+        "valid": true,
+        "proven_optimal": true,
+        "seconds": 3.109923,
+        "kpis": {
+          "total_cost": 662081.57,
+          "total_carbon_kg": 20251.09,
+          "total_carbon_t": 20.25109,
+          "late_orders": 0,
+          "total_late_days": 0,
+          "unallocated_orders": 0,
+          "unallocated_quantity": 0,
+          "all_orders_fulfilled": true,
+          "all_orders_on_time": true,
+          "plant_utilisation": {
+            "A:W1": 1.0,
+            "A:W2": 1.0,
+            "A:W3": 1.0,
+            "A:W4": 0.2548,
+            "B:W1": 0.9776,
+            "B:W2": 0.6539,
+            "B:W3": 0.1105,
+            "B:W4": 0.0,
+            "C:W1": 0.9943,
+            "C:W2": 0.9943,
+            "C:W3": 0.9943,
+            "C:W4": 0.3314
+          }
+        },
+        "solver_stages": [
+          {
+            "stage": "strict",
+            "status": "Optimal",
+            "seconds": 3.097021
+          }
+        ]
+      },
+      {
+        "case": "carbon",
+        "repeat": 3,
+        "status": "FEASIBLE",
+        "valid": true,
+        "proven_optimal": false,
+        "seconds": 5.029136,
+        "kpis": {
+          "total_cost": 697047.38,
+          "total_carbon_kg": 14260.628,
+          "total_carbon_t": 14.260628,
+          "late_orders": 0,
+          "total_late_days": 0,
+          "unallocated_orders": 0,
+          "unallocated_quantity": 0,
+          "all_orders_fulfilled": true,
+          "all_orders_on_time": true,
+          "plant_utilisation": {
+            "A:W1": 0.4738,
+            "A:W2": 0.0,
+            "A:W3": 0.7524,
+            "A:W4": 0.0,
+            "B:W1": 0.9934,
+            "B:W2": 0.9882,
+            "B:W3": 0.9961,
+            "B:W4": 0.7039,
+            "C:W1": 0.9943,
+            "C:W2": 0.9886,
+            "C:W3": 0.9943,
+            "C:W4": 0.9943
+          }
+        },
+        "solver_stages": [
+          {
+            "stage": "strict",
+            "status": "Feasible",
+            "seconds": 5.012896
+          }
+        ]
+      },
+      {
+        "case": "balanced",
+        "repeat": 3,
+        "status": "FEASIBLE",
+        "valid": true,
+        "proven_optimal": false,
+        "seconds": 5.023517,
+        "kpis": {
+          "total_cost": 694342.83,
+          "total_carbon_kg": 14301.646,
+          "total_carbon_t": 14.301646,
+          "late_orders": 0,
+          "total_late_days": 0,
+          "unallocated_orders": 0,
+          "unallocated_quantity": 0,
+          "all_orders_fulfilled": true,
+          "all_orders_on_time": true,
+          "plant_utilisation": {
+            "A:W1": 0.4833,
+            "A:W2": 0.0,
+            "A:W3": 0.7488,
+            "A:W4": 0.0,
+            "B:W1": 1.0,
+            "B:W2": 0.9816,
+            "B:W3": 1.0,
+            "B:W4": 0.7039,
+            "C:W1": 0.96,
+            "C:W2": 1.0,
+            "C:W3": 0.9943,
+            "C:W4": 0.9943
+          }
+        },
+        "solver_stages": [
+          {
+            "stage": "strict",
+            "status": "Feasible",
+            "seconds": 5.004576
+          }
+        ]
+      },
+      {
+        "case": "outage",
+        "repeat": 3,
+        "status": "BEST_EFFORT",
+        "valid": true,
+        "proven_optimal": true,
+        "seconds": 1.186336,
+        "kpis": {
+          "total_cost": 623806.15,
+          "total_carbon_kg": 20015.538,
+          "total_carbon_t": 20.015538,
+          "late_orders": 0,
+          "total_late_days": 0,
+          "unallocated_orders": 4,
+          "unallocated_quantity": 232,
+          "all_orders_fulfilled": false,
+          "all_orders_on_time": false,
+          "plant_utilisation": {
+            "A:W1": 1.0,
+            "A:W2": 1.0,
+            "A:W3": 1.0,
+            "A:W4": 0.2548,
+            "B:W1": 0.9816,
+            "B:W2": 0.65,
+            "B:W3": 0.1105,
+            "B:W4": 0.0,
+            "C:W1": 0.9943,
+            "C:W2": 0.9508,
+            "C:W3": 0.9508,
+            "C:W4": 0.9943
+          }
+        },
+        "solver_stages": [
+          {
+            "stage": "strict",
+            "status": "Infeasible",
+            "seconds": 0.01101
+          },
+          {
+            "stage": "unallocated_count",
+            "status": "Optimal",
+            "seconds": 0.036592
+          },
+          {
+            "stage": "unallocated_units",
+            "status": "Optimal",
+            "seconds": 0.120356
+          },
+          {
+            "stage": "late_orders",
+            "status": "Optimal",
+            "seconds": 0.092483
+          },
+          {
+            "stage": "late_days",
+            "status": "Optimal",
+            "seconds": 0.028362
+          },
+          {
+            "stage": "final_objective",
+            "status": "Optimal",
+            "seconds": 0.849409
+          }
+        ]
+      }
+    ]
+  },
+  "greedy_baseline": {
+    "valid": true,
+    "capacity_ok": true,
+    "eligibility_ok": true,
+    "delivery_ok": true,
+    "errors": [],
+    "total_cost": 665573.19,
+    "total_carbon_kg": 19873.929,
+    "raw_total_cost": 665573.1868000003,
+    "raw_total_carbon_kg": 19873.929039999995,
+    "late_orders": 0,
+    "total_late_days": 0,
+    "unallocated_orders": 0,
+    "plant_utilisation_by_week": {
+      "A:W1": 0.9976,
+      "A:W2": 0.9893,
+      "A:W3": 0.9857,
+      "A:W4": 0.1107,
+      "B:W1": 0.9908,
+      "B:W2": 0.9408,
+      "B:W3": 0.0,
+      "B:W4": 0.0,
+      "C:W1": 0.9943,
+      "C:W2": 0.9943,
+      "C:W3": 0.9943,
+      "C:W4": 0.3314
+    },
+    "remaining_capacity_by_week": {
+      "A:W1": 2,
+      "A:W2": 9,
+      "A:W3": 12,
+      "A:W4": 747,
+      "B:W1": 7,
+      "B:W2": 45,
+      "B:W3": 760,
+      "B:W4": 760,
+      "C:W1": 2,
+      "C:W2": 2,
+      "C:W3": 2,
+      "C:W4": 234
+    }
+  },
+  "interpretation": [
+    "Optimal means CBC proved optimality and the independent validator passed.",
+    "Feasible means a verified incumbent; optimality was not proven.",
+    "Best effort may leave demand unmet; lower totals are not automatically savings.",
+    "Performance is specific to this dataset and machine; small-instance exact checks do not prove every future input correct."
+  ]
+}
