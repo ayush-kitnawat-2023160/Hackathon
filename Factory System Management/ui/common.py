@@ -109,7 +109,7 @@ def number_check_badge(resp: dict):
     if not nc:
         return
     if nc.get("passed"):
-        st.caption("✓ Every figure matches a tool result" + (" (template fallback)" if nc.get("fallback") else ""))
+        st.caption("Verified: every figure matches a tool result" + (" (template fallback)" if nc.get("fallback") else ""))
     else:
         st.warning(f"Number check failed: {', '.join(nc.get('unmatched', []))}")
 

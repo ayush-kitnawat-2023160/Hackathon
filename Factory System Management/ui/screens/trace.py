@@ -32,7 +32,7 @@ with st.container(border=True):
         is_llm = s["agent"] in ("router", "writer") and s["tool"] in ("parse_intent", "narrate") and \
             (s.get("output") or {}).get("source") in ("llm", None)
         tag = ":orange-background[LLM]" if s["agent"] in ("router", "writer") and s["tool"] in ("parse_intent", "narrate") else ":gray-background[code]"
-        st.markdown(f"{'🟠' if is_llm else '🟢'} **{s['agent']}** {tag} `{s['tool'] or ''}`"
+        st.markdown(f"{'Model' if is_llm else 'Code'} **{s['agent']}** {tag} `{s['tool'] or ''}`"
                     + (f" · {s['ms']} ms" if s.get("ms") is not None else ""))
         detail = {k: v for k, v in (("input", s["input"]), ("output", s["output"])) if v}
         if detail:

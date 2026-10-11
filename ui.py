@@ -9,7 +9,10 @@ from datetime import date, timedelta
 
 import httpx
 import plotly.graph_objects as go
+import pandas as pd
 import streamlit as st
+from st_aggrid import AgGrid, DataReturnMode, GridOptionsBuilder
+from streamlit_echarts import st_echarts
 
 API = os.getenv("API_URL", "http://localhost:8000").rstrip("/")
 TABLES = (
@@ -20,7 +23,7 @@ TABLES = (
 )
 PALETTE = ["#365CCF", "#15A28A", "#E9A23B", "#8A68C5", "#DB6C64", "#468CA6"]
 
-st.set_page_config(page_title="TriPlan | Operations Console", page_icon="🏭", layout="wide",
+st.set_page_config(page_title="TriPlan | Operations Console", page_icon="T", layout="wide",
                    initial_sidebar_state="expanded")
 
 
@@ -93,13 +96,13 @@ def status_message(result, *, compact=False):
     validator = result.get("validator") or {}
     kpi = result.get("kpis") or {}
     if answer == "refused":
-        st.error(result.get("summary", "Request refused"), icon="🛡️")
+        st.error(result.get("summary", "Request refused"), icon=":material/gpp_bad:")
     elif answer == "clarification_needed":
-        st.info(result.get("summary", "Please clarify the request"), icon="ℹ️")
+        st.info(result.get("summary", "Please clarify the request"), icon=":material/info:")
     elif answer == "infeasible" or kpi.get("late_orders", 0) or kpi.get("unallocated_orders", 0):
-        st.warning("Best effort / delivery exception — check unallocated and late orders before approval.", icon="⚠️")
+        st.warning("Best effort / delivery exception — check unallocated and late orders before approval.", icon=":material/warning:")
     elif validator.get("valid"):
-        st.success("Independently validated allocation · production capacity and eligibility checked.", icon="✅")
+        st.success("Independently validated allocation · production capacity and eligibility checked.", icon=":material/check_circle:")
     if not compact and result.get("summary"):
         st.markdown(result["summary"])
 
@@ -181,6 +184,41 @@ def cost_carbon_chart(result):
     st.caption("Comparison points, not a complete Pareto frontier. Check fulfillment before interpreting cost changes.")
 
 
+def production_flow(rows, *, key):
+    """ECharts Sankey: actual allocated units moving from plants to production weeks."""
+    if not rows:
+        st.info("Production flow becomes available after allocation.")
+        return
+    links = defaultdict(int)
+    for row in rows:
+        links[(str(row["plant"]), int(row["week"]))] += int(row.get("qty", 0))
+    links = {pair: quantity for pair, quantity in links.items() if quantity > 0}
+    if not links:
+        st.info("There are no allocated production units to visualize.")
+        return
+    plants = sorted({plant for plant, _ in links})
+    weeks = sorted({week for _, week in links})
+    nodes = [{"name": f"Plant {plant}", "itemStyle": {"color": PALETTE[i % len(PALETTE)]}}
+             for i, plant in enumerate(plants)]
+    nodes.extend({"name": f"Week {week}", "itemStyle": {"color": "#91A5C1"}} for week in weeks)
+    edges = [{"source": f"Plant {plant}", "target": f"Week {week}", "value": quantity}
+             for (plant, week), quantity in sorted(links.items())]
+    options = {
+        "animationDuration": 450,
+        "tooltip": {"trigger": "item", "triggerOn": "mousemove",
+                    "formatter": "{b}: {c} units"},
+        "series": [{"type": "sankey", "data": nodes, "links": edges,
+                    "top": 18, "bottom": 22, "left": 12, "right": 18,
+                    "nodeWidth": 13, "nodeGap": 15, "nodeAlign": "justify",
+                    "lineStyle": {"color": "source", "opacity": 0.28, "curveness": 0.45},
+                    "label": {"color": "#243B56", "fontSize": 12},
+                    "emphasis": {"focus": "adjacency"}}],
+    }
+    st.subheader("Production flow")
+    st.caption("Allocated units by plant and production week. Hover to inspect individual flows.")
+    st_echarts(options=options, height="345px", key=f"production-flow-{key}")
+
+
 def allocation_table(result, *, table_key):
     rows = result.get("allocation") or []
     if not rows:
@@ -197,21 +235,34 @@ def allocation_table(result, *, table_key):
                 and (week == "All" or r["week"] == week)
                 and query.strip().lower() in r["order_id"].lower()]
     st.caption(f"Showing {len(filtered):,} of {len(rows):,} assigned orders. Filtered exports respect your selection.")
-    st.dataframe(filtered, hide_index=True, use_container_width=True, height=355,
-        column_order=["order_id", "plant", "week", "qty", "arrival", "on_time", "cost", "carbon_kg", "lateness_days"],
-        column_config={
-            "order_id": st.column_config.TextColumn("Order ID"),
-            "plant": st.column_config.TextColumn("Plant"),
-            "week": st.column_config.NumberColumn("Week", format="%d"),
-            "qty": st.column_config.NumberColumn("Units", format="%d"),
-            "arrival": st.column_config.TextColumn("Expected arrival"),
-            "on_time": st.column_config.CheckboxColumn("On time"),
-            "cost": st.column_config.NumberColumn("Landed cost", format="%.2f"),
-            "carbon_kg": st.column_config.NumberColumn("Carbon (kg)", format="%.3f"),
-        })
-    st.download_button("Export filtered allocation", csv_export(filtered),
+    if not filtered:
+        st.info("No assignments match the selected filters.")
+        return
+    df = pd.DataFrame(filtered)
+    preferred = ["order_id", "plant", "week", "qty", "arrival", "on_time", "cost", "carbon_kg", "lateness_days"]
+    df = df[[name for name in preferred if name in df.columns] +
+            [name for name in df.columns if name not in preferred]]
+    builder = GridOptionsBuilder.from_dataframe(df)
+    builder.configure_default_column(sortable=True, filter=True, resizable=True, editable=False, minWidth=105)
+    builder.configure_column("order_id", header_name="Order ID", pinned="left", minWidth=150)
+    builder.configure_column("cost", header_name="Landed cost", type=["numericColumn", "numberColumnFilter"])
+    builder.configure_column("carbon_kg", header_name="Carbon (kg)", type=["numericColumn", "numberColumnFilter"])
+    builder.configure_column("arrival", header_name="Expected arrival")
+    builder.configure_selection(selection_mode="disabled")
+    builder.configure_pagination(enabled=True, paginationAutoPageSize=False, paginationPageSize=20)
+    builder.configure_grid_options(domLayout="normal", suppressRowClickSelection=True)
+    grid = AgGrid(df, gridOptions=builder.build(), key=f"allocation-grid-{table_key}-{result.get('run_id')}",
+                  height=440, theme="streamlit", enable_enterprise_modules=False,
+                  show_search=True, show_download_button=False,
+                  data_return_mode=DataReturnMode.FILTERED_AND_SORTED,
+                  update_on=["filterChanged", "sortChanged"])
+    grid_data = grid.get("data") if grid is not None else None
+    # The component returns a server-side data frame after browser filters/sorts.
+    # Until the component initializes, export the Python-filtered rows instead.
+    export_rows = grid_data.to_dict("records") if isinstance(grid_data, pd.DataFrame) else filtered
+    st.download_button("Export visible allocation", csv_export(export_rows),
                        file_name=f"triplan-{result.get('run_id', 'plan')}-allocation.csv",
-                       mime="text/csv", disabled=not filtered, icon=":material/download:",
+                       mime="text/csv", disabled=not export_rows, icon=":material/download:",
                        key=f"{table_key}-download", on_click="ignore")
 
 
@@ -248,7 +299,7 @@ current = st.session_state["current_plan"]
 stale = bool(current and current.get("input_versions") != versions)
 
 with st.sidebar:
-    st.markdown("## 🏭 TriPlan")
+    st.markdown("## TriPlan")
     st.caption("OPERATIONS INTELLIGENCE")
     st.divider()
     navigation = st.radio("Workspace", ["Overview", "Data sources", "Allocation studio",
@@ -258,11 +309,11 @@ with st.sidebar:
                                     "Ask about verified decisions", "Trace and export runs"])
     st.divider()
     st.subheader("System status")
-    st.success("API connected", icon="✅")
+    st.success("API connected", icon=":material/check_circle:")
     (st.success if ready else st.warning)("Dataset ready" if ready else "Upload required tables")
     llm_status = health.get("llm", {}).get("status", "unknown")
     if llm_status == "mock":
-        st.info("Deterministic AI fallback", icon="ℹ️")
+        st.info("Deterministic AI fallback", icon=":material/info:")
     else:
         st.caption(f"Language model: {llm_status}")
     st.progress(len(loaded.intersection({"orders", "plants", "transport_duties"})) / 3,
@@ -291,6 +342,9 @@ if navigation == "Overview":
         with right:
             with st.container(border=True):
                 utilisation_chart(current.get("kpis") or {})
+        if current.get("allocation"):
+            with st.container(border=True):
+                production_flow(current["allocation"], key="overview")
         if current.get("tradeoff"):
             with st.container(border=True):
                 cost_carbon_chart(current)
@@ -322,7 +376,7 @@ elif navigation == "Data sources":
     with st.container(border=True):
         st.subheader("Upload and validate")
         for name, title, description in TABLES:
-            with st.expander(f"{'✅' if name in loaded else '◻️'}  {title}", expanded=name not in loaded):
+            with st.expander(f"{title} — {'Loaded' if name in loaded else 'Not loaded'}", expanded=name not in loaded):
                 st.caption(description)
                 file = st.file_uploader(f"{name}.csv", type="csv", key=f"file-{name}")
                 if file:
@@ -337,7 +391,7 @@ elif navigation == "Data sources":
                             progress.update(label="Validation finished", state="complete")
                         if response.get("status") == "loaded":
                             st.success(f"{response['rows_loaded']:,} rows accepted · version {response['checksum'][:12]}")
-                            st.toast(f"{title} updated", icon="✅")
+                            st.toast(f"{title} updated", icon=":material/check_circle:")
                             st.rerun()
                         else:
                             st.error(response.get("error", "Upload rejected"))
@@ -369,7 +423,7 @@ elif navigation == "Allocation studio":
                        if objective == "Balanced" else None)
             try:
                 run_action(question, weights=weights)
-                st.toast("Allocation ready for review", icon="✅")
+                st.toast("Allocation ready for review", icon=":material/check_circle:")
             except (httpx.HTTPError, ValueError) as exc:
                 st.error(f"Could not complete allocation: {exc}")
     result = st.session_state["current_plan"]
@@ -390,6 +444,8 @@ elif navigation == "Allocation studio":
             with b:
                 with st.container(border=True):
                     utilisation_chart(result.get("kpis") or {})
+            with st.container(border=True):
+                production_flow(result["allocation"], key="studio")
         with st.expander("Solver validation, assumptions and limitations"):
             st.json({"solver_status": result.get("solver_status"),
                      "validator": result.get("validator"),
@@ -442,7 +498,7 @@ elif navigation == "Scenario lab":
         if submit:
             try:
                 st.session_state["scenario_result"] = run_action(request, scenario=scenario_data)
-                st.toast("Scenario comparison ready", icon="✅")
+                st.toast("Scenario comparison ready", icon=":material/check_circle:")
             except (httpx.HTTPError, ValueError) as exc:
                 st.error(f"Scenario failed: {exc}")
     result = st.session_state.get("scenario_result")

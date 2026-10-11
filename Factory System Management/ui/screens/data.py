@@ -48,7 +48,7 @@ with left, st.container(border=True):
     passed = sum(c["passed"] for c in checks)
     st.markdown(f"**Validation checks** · {passed} of {len(checks)} passed")
     for c in checks:
-        st.markdown(f"{'✅' if c['passed'] else '❌'} {c['check']}" + (f"  \n  :gray[{c['detail']}]" if c["detail"] else ""))
+        st.markdown(f"{'Passed' if c['passed'] else 'Failed'} {c['check']}" + (f"  \n  :gray[{c['detail']}]" if c["detail"] else ""))
 with right, st.container(border=True):
     st.markdown("**Rejected rows**")
     rej = pd.DataFrame(status["rejects"])

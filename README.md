@@ -23,7 +23,14 @@ docker compose up --build
 ### Streamlit operations console
 
 The dashboard uses a consistent light theme, responsive sidebar navigation, bordered KPI cards,
-Plotly charts and searchable/downloadable tables. Navigate using the **Workspace** selector:
+Plotly charts, and community components from the [official Streamlit component gallery](https://streamlit.io/components).
+The UI uses plain text and Material icons instead of emoji characters.
+
+- **AgGrid (`streamlit-aggrid`)** adds column filters, sorting, pagination, and searchable order allocations. The grid is read-only and excludes licensed enterprise modules. Exported CSVs use the currently returned grid rows after browser filtering/sorting.
+- **ECharts (`streamlit-echarts`)** renders a production-flow Sankey showing the verified allocation from plant to production week, weighted by assigned units. It does not invent data or calculate assignments.
+- **Plotly** remains responsible for capacity-utilisation and cost–carbon comparisons.
+
+Both components are pinned to versions compatible with the project’s Streamlit 1.45 runtime; avoid unreviewed upgrades of the chart plugin because newer releases require a later Streamlit component API. Navigate using the **Workspace** selector:
 
 | Screen | Purpose |
 | --- | --- |
