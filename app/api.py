@@ -39,7 +39,9 @@ def create_app(db_path=None, llm=None):
         tables, versions = store.snapshot()
         return {"status": "ok", "api": "ready", "database": "ready",
                 "llm": model.ready(), "data_ready": REQUIRED_TO_SOLVE <= set(tables),
-                "tables_loaded": sorted(tables), "input_versions": versions}
+                "tables_loaded": sorted(tables), "input_versions": versions,
+                "planning_start": os.getenv("PLANNING_START", "2026-10-12"),
+                "planning_weeks": int(os.getenv("PLANNING_WEEKS", "4"))}
 
     @app.post("/ingest")
     async def ingest(file: UploadFile = File(...), table: str | None = Form(None),

@@ -176,7 +176,8 @@ def create_workflow(llm=None):
                     "steps": log(state, "scenario", "solve_tradeoff", {"status": result["status"]})}
         if intent.kind == "replan":
             baseline = solve_allocation(data, {**config, "use_capacity_events": False})
-            config["use_capacity_events"] = True
+            # An inline what-if should not silently combine with an uploaded outage.
+            config["use_capacity_events"] = not bool(intent.plant)
             if intent.plant and intent.capacity_loss_pct is not None:
                 start = scenario.get("from_date") or intent.from_date or data.start.isoformat()
                 end = scenario.get("to_date") or intent.to_date or (data.start + timedelta(days=13)).isoformat()

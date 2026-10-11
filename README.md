@@ -20,6 +20,24 @@ docker compose up --build
 - Health: `http://localhost:8000/health`
 - Upload `orders.csv`, `plants.csv`, and `transport_duties.csv` in the UI (capacity events can arrive later), then ask to allocate.
 
+### Streamlit operations console
+
+The dashboard uses a consistent light theme, responsive sidebar navigation, bordered KPI cards,
+Plotly charts and searchable/downloadable tables. Navigate using the **Workspace** selector:
+
+| Screen | Purpose |
+| --- | --- |
+| **Overview** | Cost, emissions, on-time and at-risk KPI cards; plant allocation and capacity utilisation charts |
+| **Data sources** | Load the three required CSVs and optionally `capacity_events.csv`; inspect upload status and checksum versions |
+| **Allocation studio** | Choose balanced, lowest-cost or lowest-carbon objectives; adjust weights; generate and filter allocations; export CSV |
+| **Scenario lab** | Model a plant capacity loss over specified dates, assess a carbon reduction or use uploaded capacity events; compare baseline and scenario |
+| **AI analyst** | Ask questions in natural language, or use suggested prompts; answers refer to recorded solver evidence |
+| **Run audit** | Inspect current-session run history, retrieve any run by ID from SQLite-backed traces, and download trace JSON |
+
+**Demo path:** Load the CSVs → Allocation studio (Lowest cost) → Overview → Scenario lab (Plant B, 30% loss) → AI analyst (leadership brief) → Run audit. The default synthetic pack can be generated with `python3 scripts/generate_data.py`. The dashboard will explicitly warn if a scenario leaves orders late or unallocated; in that case lower total cost is **not** evidence of savings.
+
+The sidebar shows the configured LLM status. `MOCK_LLM=true` uses deterministic explanations for the offline demo; configure a real LLM provider when ready. Displayed KPIs and allocations always come from the solver and independent validator.
+
 To run without Docker: install `requirements.txt`, then launch `uvicorn app.api:app --reload` and `streamlit run ui.py` in separate terminals. For this machine's system Python, isolated dependencies can be installed into `.app-deps` and accessed with `PYTHONPATH=.app-deps`.
 
 The judge-compatible API is:
