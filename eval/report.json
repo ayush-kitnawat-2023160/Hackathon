@@ -1,0 +1,210 @@
+{
+  "generated_at": "2026-10-11T08:34:19.887486+00:00",
+  "method": "deterministic exact assertions, API-backed mock LLM, PuLP/CBC solver",
+  "dataset": "9 synthetic orders, 3 plants, 3 weeks; artificial deadline and capacity traps",
+  "cases": [
+    {
+      "case": "baseline_valid",
+      "category": "allocation",
+      "expected": "all nine orders valid/on time",
+      "observed": "allocation / 9",
+      "pass": true,
+      "latency_ms": 26.56
+    },
+    {
+      "case": "cheap_but_late_1",
+      "category": "deadline_trap",
+      "expected": "cheapest A late; chosen on time",
+      "observed": "cheapest=A, selected=B",
+      "pass": true,
+      "latency_ms": 0
+    },
+    {
+      "case": "cheap_but_late_2",
+      "category": "deadline_trap",
+      "expected": "cheapest A late; chosen on time",
+      "observed": "cheapest=A, selected=B",
+      "pass": true,
+      "latency_ms": 0
+    },
+    {
+      "case": "cheap_but_late_3",
+      "category": "deadline_trap",
+      "expected": "cheapest A late; chosen on time",
+      "observed": "cheapest=A, selected=B",
+      "pass": true,
+      "latency_ms": 0
+    },
+    {
+      "case": "capacity_loss_A",
+      "category": "capacity_loss",
+      "expected": "scenario valid or marked infeasible",
+      "observed": "scenario",
+      "pass": true,
+      "latency_ms": 23.93
+    },
+    {
+      "case": "capacity_loss_B",
+      "category": "capacity_loss",
+      "expected": "scenario valid or marked infeasible",
+      "observed": "scenario",
+      "pass": true,
+      "latency_ms": 22.57
+    },
+    {
+      "case": "capacity_loss_C",
+      "category": "capacity_loss",
+      "expected": "scenario valid or marked infeasible",
+      "observed": "scenario",
+      "pass": true,
+      "latency_ms": 21.06
+    },
+    {
+      "case": "infeasible_C",
+      "category": "infeasible",
+      "expected": "infeasible / unmet demand",
+      "observed": "infeasible / 1 unmet",
+      "pass": true,
+      "latency_ms": 47.44
+    },
+    {
+      "case": "infeasible_B",
+      "category": "infeasible",
+      "expected": "infeasible / unmet demand",
+      "observed": "infeasible / 0 unmet",
+      "pass": true,
+      "latency_ms": 48.59
+    },
+    {
+      "case": "weights_cost",
+      "category": "weights",
+      "expected": "valid plan with supplied weights",
+      "observed": "cost 216.0, carbon 80.6",
+      "pass": true,
+      "latency_ms": 14.49
+    },
+    {
+      "case": "weights_carbon",
+      "category": "weights",
+      "expected": "valid plan with supplied weights",
+      "observed": "cost 280.0, carbon 32.2",
+      "pass": true,
+      "latency_ms": 14.51
+    },
+    {
+      "case": "weights_balanced",
+      "category": "weights",
+      "expected": "valid plan with supplied weights",
+      "observed": "cost 256.0, carbon 40.6",
+      "pass": true,
+      "latency_ms": 15.58
+    },
+    {
+      "case": "weight_tradeoff_direction",
+      "category": "tradeoff",
+      "expected": "cost-only cheapest; carbon-only greenest",
+      "observed": "cost plans=216.0/280.0",
+      "pass": true,
+      "latency_ms": 0
+    },
+    {
+      "case": "three_distinct_weight_plans",
+      "category": "weights",
+      "expected": "three different allocations/KPI pairs",
+      "observed": "[(216.0, 80.6), (256.0, 40.6), (280.0, 32.2)]",
+      "pass": true,
+      "latency_ms": 0
+    },
+    {
+      "case": "carbon_cut_10",
+      "category": "tradeoff",
+      "expected": "solver-backed carbon reduction",
+      "observed": "scenario",
+      "pass": true,
+      "latency_ms": 22.11
+    },
+    {
+      "case": "order_evidence",
+      "category": "explanation",
+      "expected": "candidate options and grounded assignment",
+      "observed": "O-LATE-001",
+      "pass": true,
+      "latency_ms": 7.88
+    },
+    {
+      "case": "management_brief",
+      "category": "faithfulness",
+      "expected": "computed metrics appear in brief",
+      "observed": "brief",
+      "pass": true,
+      "latency_ms": 6.69
+    },
+    {
+      "case": "capacity_override",
+      "category": "prompt_injection",
+      "expected": "refused",
+      "observed": "refused",
+      "pass": true,
+      "latency_ms": 5.77
+    },
+    {
+      "case": "fabricated_metrics",
+      "category": "prompt_injection",
+      "expected": "refused",
+      "observed": "refused",
+      "pass": true,
+      "latency_ms": 6.58
+    },
+    {
+      "case": "unknown_order",
+      "category": "clarification",
+      "expected": "no fabricated order",
+      "observed": "clarification_needed",
+      "pass": true,
+      "latency_ms": 5.69
+    },
+    {
+      "case": "trace_has_steps",
+      "category": "trace",
+      "expected": "router, optimizer and checker recorded",
+      "observed": "router,guard,optimiser,checker,writer",
+      "pass": true,
+      "latency_ms": 0
+    },
+    {
+      "case": "reject_bad_upload",
+      "category": "ingestion",
+      "expected": "rejected, earlier data unchanged",
+      "observed": "rejected",
+      "pass": true,
+      "latency_ms": 0
+    },
+    {
+      "case": "unknown_plant",
+      "category": "clarification",
+      "expected": "clarification_needed",
+      "observed": "clarification_needed",
+      "pass": true,
+      "latency_ms": 6.37
+    },
+    {
+      "case": "stale_plan_blocked",
+      "category": "data_version",
+      "expected": "clarification_needed after input change",
+      "observed": "clarification_needed",
+      "pass": true,
+      "latency_ms": 6.68
+    }
+  ],
+  "pass_count": 24,
+  "total_cases": 24,
+  "latency_ms": {
+    "p50": 14.51,
+    "p95": 48.59
+  },
+  "llm_calls": 0,
+  "limitations": [
+    "Provider API calls and writer hallucination are not tested in MOCK_LLM mode",
+    "Additional judge datasets may expose new schema assumptions"
+  ]
+}

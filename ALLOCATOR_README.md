@@ -8,7 +8,7 @@ connect it to LangGraph or FastAPI without modifying the optimizer.
 Python 3.11 or 3.12; PuLP ships a CBC solver binary. On Ubuntu without `python3-venv`, install locally:
 
 ```bash
-cd ~/Desktop/HCL-Hackathon/Hackathon
+cd ~/Desktop/Hackathons/Hackathon
 python3 -m pip install --target .allocator-deps -r requirements-allocator.txt
 ```
 

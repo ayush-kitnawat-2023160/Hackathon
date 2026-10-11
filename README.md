@@ -1,4 +1,62 @@
-# Multi-Plant dataset generator
+# TriPlan — AI-assisted multi-plant order allocation
+
+TriPlan now includes the **solver**, mandatory **FastAPI judge endpoints**, a single **LangGraph** workflow, a minimal **Streamlit** interface, **SQLite input/run history**, and Docker Compose.
+
+The solver decides. The independent validator verifies. The LLM parses requests and explains verified outputs. No LLM generates assignments, rankings or computed totals.
+
+## Quick start (full app)
+
+```bash
+cp .env.example .env
+docker compose up --build
+```
+
+- Dashboard: `http://localhost:8501`
+- API docs: `http://localhost:8000/docs`
+- Health: `http://localhost:8000/health`
+- Upload `orders.csv`, `plants.csv`, and `transport_duties.csv` in the UI (capacity events can arrive later), then ask to allocate.
+
+To run without Docker: install `requirements.txt`, then launch `uvicorn app.api:app --reload` and `streamlit run ui.py` in separate terminals. For this machine's system Python, isolated dependencies can be installed into `.app-deps` and accessed with `PYTHONPATH=.app-deps`.
+
+The judge-compatible API is:
+
+| Endpoint | Use |
+| --- | --- |
+| `POST /ingest` | Multipart `file` plus form `table=orders`, `plants`, `transport_duties`, or `capacity_events`; alternatively use form `metadata={"table":"orders"}` |
+| `POST /analyze` | JSON with `request`, optional `weights` `{cost, carbon, lateness}`, and optional `scenario` |
+| `GET /health` | API/data/LLM readiness |
+| `GET /trace/{run_id}` | Steps, tool outputs, data checksums, and saved response |
+
+Example:
+
+```bash
+curl -F 'table=orders' -F 'file=@data/synthetic/orders.csv' http://localhost:8000/ingest
+curl -F 'table=plants' -F 'file=@data/synthetic/plants.csv' http://localhost:8000/ingest
+curl -F 'table=transport_duties' -F 'file=@data/synthetic/transport_duties.csv' http://localhost:8000/ingest
+curl -X POST http://localhost:8000/analyze -H 'Content-Type: application/json' \
+  -d '{"request":"Allocate this week’s orders", "weights":{"cost":0.7,"carbon":0.3}}'
+```
+
+To generate reproducible practice data, use `python3 scripts/generate_data.py` as documented below. You can also stage files directly from the local CLI with `python3 -m app.bootstrap --data-dir data/synthetic`. In Docker, upload through the UI or copy the CSV directory into the API container and run the same bootstrap command.
+
+`MOCK_LLM=true` (default) provides deterministic request routing and validated numerical templates without network access. For an actual LLM, set `MOCK_LLM=false`, `LLM_PROVIDER` (`ollama`, `openai`, `anthropic`, or `gemini`), and `LLM_MODEL`, plus its API key if necessary. Do not commit `.env`. Requests always execute the same constrained solver even when a model is used.
+
+**Business assumptions:** The base planning Monday (`PLANNING_START`), number of production weeks (`PLANNING_WEEKS`) and fallback electricity price (`ENERGY_PRICE_DEFAULT`) are explicitly configurable. The official minimum `plants.csv` does not include electricity price. Our illustrative default value of `8` is *not* a verified real-world rate. Whole orders finish manufacturing on Sunday; weekly capacity is shared across products; landed-cost duty applies to production, energy and transport in this synthetic convention. Confirm these conventions with organizers before scoring official datasets. Each accepted CSV version is retained in SQLite; historical run traces record checksums.
+
+**Local demo security:** Uploads enforce type, row, size, duplicate, date and numeric checks. Set `ADMIN_TOKEN` to require `X-Admin-Token` for ingestion in a shared environment. Default is intentionally unauthenticated for local judge scripts; do not expose this configuration to the public internet.
+
+### Validation
+
+```bash
+python3 -m pytest -q
+docker compose config --quiet
+```
+
+The allocator currently uses **PuLP/CBC**, not OR-Tools CP-SAT. Both are allowed in the official guide. The standalone allocator and generator documentation follows.
+
+---
+
+## Synthetic dataset generator
 
 > **Standalone allocator now available:** see [ALLOCATOR_README.md](ALLOCATOR_README.md)
 > for the PuLP solver, CLI, scenarios, independent validator, and JSON handoff.
@@ -12,7 +70,7 @@ The generator was checked against Sections 4.3–4.5 and Annexes B/D of the supp
 Open a terminal in this project directory:
 
 ```bash
-cd /home/ayush/Desktop/HCL-Hackathon/Hackathon
+cd /home/ayush/Desktop/Hackathons/Hackathon
 python3 scripts/generate_data.py
 python3 scripts/validate_data.py
 ```

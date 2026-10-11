@@ -1,0 +1,39 @@
+services:
+  api:
+    build: .
+    command: uvicorn app.api:app --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
+    volumes:
+      - triplan-data:/data
+    environment:
+      DATABASE_PATH: /data/triplan.sqlite
+      PLANNING_START: ${PLANNING_START:-2026-10-12}
+      PLANNING_WEEKS: ${PLANNING_WEEKS:-4}
+      ENERGY_PRICE_DEFAULT: ${ENERGY_PRICE_DEFAULT:-8}
+      MOCK_LLM: ${MOCK_LLM:-true}
+      LLM_PROVIDER: ${LLM_PROVIDER:-ollama}
+      LLM_MODEL: ${LLM_MODEL:-qwen2.5:7b-instruct}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      ADMIN_TOKEN: ${ADMIN_TOKEN:-}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health',timeout=3)"]
+      interval: 10s
+      retries: 5
+  ui:
+    build: .
+    command: streamlit run ui.py --server.address 0.0.0.0 --server.port 8501 --server.headless true
+    ports:
+      - "8501:8501"
+    environment:
+      API_URL: http://api:8000
+      ADMIN_TOKEN: ${ADMIN_TOKEN:-}
+    depends_on:
+      api:
+        condition: service_healthy
+volumes:
+  triplan-data:

@@ -7,6 +7,7 @@ from collections import defaultdict
 from dataclasses import asdict
 from datetime import date
 from pathlib import Path
+import tempfile
 import uuid
 
 from .candidates import create_candidates, weekly_capacities
@@ -100,8 +101,16 @@ def _build_model(data, config, candidates, *, best_effort=False):
 def _execute(model, objective, *, seconds):
     pulp = _pulp()
     model.setObjective(objective)
-    model.solve(pulp.PULP_CBC_CMD(msg=False, timeLimit=seconds))
-    return pulp.LpStatus[model.status]
+    # PuLP/CBC sometimes maps a time-limited incumbent to LpStatus 'Optimal'.
+    # Read the solver's proof status, not just its solution-file label.
+    with tempfile.TemporaryDirectory(prefix="triplan-cbc-") as folder:
+        log_path = Path(folder) / "cbc.log"
+        model.solve(pulp.PULP_CBC_CMD(msg=False, timeLimit=seconds, logPath=str(log_path)))
+        solver_log = log_path.read_text(errors="replace") if log_path.exists() else ""
+    status = pulp.LpStatus[model.status]
+    if status == "Optimal" and "Result - Optimal solution found" not in solver_log:
+        return "Not Solved"  # Feasible incumbent can still be validated and labeled FEASIBLE.
+    return status
 
 
 def _extract(data, config, x, u, candidates, *, status, mode):

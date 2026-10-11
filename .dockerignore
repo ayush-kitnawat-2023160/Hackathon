@@ -1,0 +1,9 @@
+.git
+.env
+.venv
+.app-deps
+.allocator-deps
+data/
+eval/report.json
+__pycache__/
+.pytest_cache/

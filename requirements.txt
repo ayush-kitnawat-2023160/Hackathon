@@ -1,0 +1,10 @@
+PuLP==3.3.0
+fastapi==0.115.12
+uvicorn==0.34.2
+pydantic==2.11.4
+python-multipart==0.0.20
+langgraph==0.4.7
+httpx==0.28.1
+streamlit==1.45.1
+plotly==6.1.0
+pytest==8.3.5
