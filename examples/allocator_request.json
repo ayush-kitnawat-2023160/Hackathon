@@ -1,0 +1,13 @@
+{
+  "objective": "balanced",
+  "cost_weight": 0.7,
+  "carbon_weight": 0.3,
+  "use_capacity_events": false,
+  "allow_fallback": true,
+  "time_limit_seconds": 20,
+  "max_carbon_kg": null,
+  "max_cost": null,
+  "excluded_plants": [],
+  "excluded_plant_products": [],
+  "forced_assignments": {}
+}

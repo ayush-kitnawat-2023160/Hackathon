@@ -1,0 +1,3 @@
+# Standalone solver dependency (no LLM, LangGraph or web framework needed).
+PuLP==3.3.0
+

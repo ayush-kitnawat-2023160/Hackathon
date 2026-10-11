@@ -1,0 +1,8 @@
+# Synthetic datasets are generated locally. Track the generator, not bulk data.
+# All generated synthetic CSVs; keep generator, code and data cards in Git.
+data/
+__pycache__/
+.pytest_cache/
+.venv/
+.env
+.allocator-deps/
